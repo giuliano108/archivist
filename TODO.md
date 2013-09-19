@@ -1,0 +1,3 @@
+- Use a proper logger in archivist/log
+- Notifications? Send out an email when a new config file comes in?
+- getconfig.rb (SSH into the device, issue "wr net", triggering the archiving)

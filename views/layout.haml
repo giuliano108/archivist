@@ -1,0 +1,109 @@
+!!!
+%html{:lang => 'en'}
+  %head
+    %title= ApplicationTitle
+    %link{:href => '//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css', :rel => 'stylesheet', :type => 'text/css'}
+    %link{:href => '/diffy.css', :rel => 'stylesheet', :type => 'text/css'}
+    %link{:href => '/bootstrapSwitch.css', :rel => 'stylesheet', :type => 'text/css'}
+    %script{:src => '//code.jquery.com/jquery-1.9.1.min.js', :type => 'text/javascript'}
+    %script{:src => '/bootstrapSwitch.js', :type => 'text/javascript'}
+    :css
+      table#archive tbody td:first-child {
+        font-family: "Monaco", "Menlo", "Consolas", "Courier New", monospace;
+      }
+      table#archive thead th:last-child {
+        text-align: right;
+      }
+      table#archive tbody td:last-child {
+        text-align: right;
+      }
+      input.input-huge {
+        width: 100%;
+        font-family: "Monaco", "Menlo", "Consolas", "Courier New", monospace;
+      }
+  %body
+    .navbar
+      .navbar-inner
+        .container
+          %a.brand{:href => '/'} #{ApplicationTitle}
+          %ul.nav.pull-right
+            %li
+              %p.navbar-text Configuration files archive
+
+    #content= yield
+
+    %hr
+      .container
+        .pull-left= ApplicationTitle
+        .pull-right= "(#{Sinatra::Base.environment.to_s} on #{request.env['SERVER_SOFTWARE'].gsub(/[ \/].*$/, '')})"
+
+:javascript
+  function set_from() {
+    $(this).text('From');
+    $(this).addClass('btn-success');
+    $('.differ').not('.btn-success').text('Select: to');
+  }
+
+  function set_to() {
+    if ($(this).hasClass('btn-success')) return;
+    $(this).text('To (click again to diff)');
+    $(this).addClass('btn-primary');
+    $('.differ').not('.btn-success').not('.btn-primary').text('Select: from');
+  }
+
+  function cleanup() {
+    $('.differ.btn-success').removeClass('btn-success');
+    $('.differ.btn-primary').removeClass('btn-primary');
+    $('.differ').text('Select: from');
+  }
+
+  function no_from() {
+    return $('.btn-success').length == 0;
+  }
+
+  function no_to() {
+    return $('.btn-primary').length == 0;
+  }
+
+  function am_I_from() {
+    return $(this).hasClass('btn-success');
+  }
+
+  function am_I_to() {
+    return $(this).hasClass('btn-primary');
+  }
+
+  function click_handler() {
+    if (no_from()) {
+      set_from.call(this);
+    } else {
+      if (no_to()) {
+        set_to.call(this);
+      } else {
+        if (am_I_from.call(this)) return;
+        if (am_I_to.call(this)) {
+          to = $.trim($(this).parent().parent().children().first().text());
+          from = $.trim($('.btn-success').parent().parent().children().first().text());
+          window.open('/diff/'+from+'/'+to);
+          cleanup();
+        } else {
+          cleanup();
+          set_from.call(this);
+        }
+      }   
+    }
+  }
+
+  function toggle_unchanged() {
+    $('.diff li.unchanged').toggleClass('hidden');
+  }
+
+  $(document).ready(function() {   
+    cleanup();
+    $('.differ').click(click_handler);
+
+    toggle_unchanged();
+    $('#unchanged-toggle').on('switch-change', function (e, data) {
+        toggle_unchanged();
+    });
+  })

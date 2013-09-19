@@ -1,0 +1,6 @@
+.*.swp
+Capfile
+/config/01-production.yaml
+/config/01-production-*.yaml
+/config/01-development.yaml
+/dev

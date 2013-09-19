@@ -1,0 +1,6 @@
+DEFAULTS: &DEFAULTS
+  incoming_path: 'a/path/incoming' # incoming files path
+  archive_path: 'a/path/archive'
+  show_last_n: 60 # At most, show this many files in the Web UI
+  web_username: 'username' # Web UI credentials
+  web_password: 'password'

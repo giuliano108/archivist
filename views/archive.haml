@@ -1,0 +1,14 @@
+.container.main
+  %table#archive.table.table-hover
+    %thead
+      %tr
+        %th File
+        %th Diff
+    %tbody
+      - @files.each_with_index do |name|
+        %tr
+          %td
+            %a{:href => '/file/' + name} #{name}
+          %td
+            %button.btn.btn-small.differ
+              &nbsp;
